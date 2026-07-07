@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Fast Runner</title>
+<style>
+body{
+    margin:0;
+    background:#87CEEB;
+    overflow:hidden;
+    font-family:Arial;
+}
+#game{
+    width:400px;
+    height:600px;
+    margin:auto;
+    position:relative;
+    background:#555;
+    overflow:hidden;
+}
+#player{
+    width:40px;
+    height:60px;
+    background:red;
+    position:absolute;
+    bottom:20px;
+    left:180px;
+}
+.obstacle{
+    width:40px;
+    height:40px;
+    background:yellow;
+    position:absolute;
+    top:-40px;
+}
+#score{
+    position:absolute;
+    color:white;
+    font-size:24px;
+    left:10px;
+    top:10px;
+}
+</style>
+</head>
+<body>
+
+<div id="game">
+<div id="score">Score: 0</div>
+<div id="player"></div>
+</div>
+
+<script>
+
+const player = document.getElementById("player");
+const game = document.getElementById("game");
+const score = document.getElementById("score");
+
+const lanes = [60,180,300];
+let lane = 1;
+let points = 0;
+let speed = 5;
+
+player.style.left = lanes[lane] + "px";
+
+function move(){
+    player.style.left = lanes[lane] + "px";
+}
+
+document.addEventListener("keydown", e => {
+
+    if(e.key=="a" || e.key=="A"){
+        if(lane>0) lane--;
+        move();
+    }
+
+    if(e.key=="d" || e.key=="D"){
+        if(lane<2) lane++;
+        move();
+    }
+
+    if(e.key=="w" || e.key=="W"){
+        speed = 10; // boost speed
+    }
+});
+
+document.addEventListener("keyup", e => {
+    if(e.key=="w" || e.key=="W"){
+        speed = 5; // normal speed
+    }
+});
+
+function createObstacle(){
+
+    let obs = document.createElement("div");
+    obs.className = "obstacle";
+
+    let l = Math.floor(Math.random()*3);
+    obs.style.left = lanes[l] + "px";
+
+    game.appendChild(obs);
+
+    let y = -40;
+
+    let timer = setInterval(() => {
+
+        y += speed;
+        obs.style.top = y + "px";
+
+        if(y > 600){
+            points++;
+            score.innerHTML = "Score: " + points;
+            obs.remove();
+            clearInterval(timer);
+        }
+
+        if(y > 500 && l == lane){
+            alert("Game Over! Score: " + points);
+            location.reload();
+        }
+
+    },20);
+}
+
+setInterval(createObstacle,900);
+
+</script>
+
+</body>
+</html>
